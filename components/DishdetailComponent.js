@@ -8,7 +8,7 @@ class DishDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dishes: DISHES
+            dishes: DISHES 
         };
     }
 
@@ -17,9 +17,11 @@ class DishDetail extends Component {
     };
 
     render() {
-        const dishId = this.props.navigation.getParam('dishId');
+    
+        const dishidz  = this.props.route.params.dishId ;
         return(
-            <RenderDish dish={this.state.dishes[+dishId]} />
+            
+             <RenderDish dish={this.state.dishes[dishidz]} />
         );
     }
 }
