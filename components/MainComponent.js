@@ -4,6 +4,8 @@ import Dishdetail from './DishdetailComponent';
 import Home from './HomeComponent';
 import Contact from './ContactComponent';
 import About from './AboutComponent';
+import Reservation from './ReservationComponent';
+import Favorites from './FavoriteComponent';
 import { View, Text, ScrollView, Image, StyleSheet , Button } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -11,6 +13,26 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from 'react-native-elements';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer'
+import { connect } from 'react-redux';
+import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
+
+
+const mapStateToProps = state => {
+  return {
+    dishes: state.dishes,
+    comments: state.comments,
+    promotions: state.promotions,
+    leaders: state.leaders
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  fetchDishes: () => dispatch(fetchDishes()),
+  fetchComments: () => dispatch(fetchComments()),
+  fetchPromos: () => dispatch(fetchPromos()),
+  fetchLeaders: () => dispatch(fetchLeaders()),
+})
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -73,6 +95,42 @@ function Contactstack () {
   )
 }
 
+function Favoritesstack () {
+  return (
+
+      <Stack.Navigator>
+        <Stack.Screen 
+             name="My Favorites"
+             component={Favorites}
+             options={({ navigation }) => ({
+              headerStyle: {backgroundColor: '#512DA8'},
+              headerTintColor:'#fff',
+              headerTitleStyle: {color: '#fff'},
+              headerLeft: () => (<Icon name='menu' size={24} color='white' onPress= {() => navigation.toggleDrawer()} />) } )} />
+
+      </Stack.Navigator>
+
+  )
+}
+
+function Reservationstack () {
+  return (
+
+      <Stack.Navigator>
+        <Stack.Screen 
+             name="Reservation"
+             component={Reservation}
+             options={({ navigation }) => ({
+              headerStyle: {backgroundColor: '#512DA8'},
+              headerTintColor:'#fff',
+              headerTitleStyle: {color: '#fff'},
+              headerLeft: () => (<Icon name='menu' size={24} color='white' onPress= {() => navigation.toggleDrawer()} />) } )} />
+
+      </Stack.Navigator>
+
+  )
+}
+
 function Aboutstack () {
   return (
 
@@ -100,6 +158,8 @@ function Mainstack () {
         <Drawer.Screen name="Menu" component={Menustack} options= {{drawerLabel: 'Menu', drawerIcon: ({tintColor}) => (<Icon name='list' type='font-awesome' size={24} color={tintColor} />)} }/>
         <Drawer.Screen name="About" component={Aboutstack} options= {{drawerLabel: 'About', drawerIcon: ({tintColor}) => (<Icon name='info-circle' type='font-awesome' size={24} color={tintColor} />)}}/>
         <Drawer.Screen name="Contact" component={Contactstack} options = {{drawerLabel: 'Contact', drawerIcon: ({tintColor}) => (<Icon name='address-card' type='font-awesome' size={22} color={tintColor} />)}}/>
+        <Drawer.Screen name="My Favorites" component={Favoritesstack} options = {{drawerLabel: 'My Favorites', drawerIcon: ({tintColor}) => (<Icon name='heart' type='font-awesome' size={22} color={tintColor} />)}}/>
+        <Drawer.Screen name="Reservation" component={Reservationstack} options = {{drawerLabel: 'Reservation', drawerIcon: ({tintColor}) => (<Icon name='cutlery' type='font-awesome' size={22} color={tintColor} />)}}/>
       </Drawer.Navigator>
     </NavigationContainer>
   )
@@ -126,7 +186,12 @@ const CustomDrawerContentComponent = (props) => (
 
 class Main extends  Component {
 
-
+  componentDidMount() {
+    this.props.fetchDishes();
+    this.props.fetchComments();
+    this.props.fetchPromos();
+    this.props.fetchLeaders();
+  }
     render() {
        return(
 
@@ -163,7 +228,7 @@ const styles = StyleSheet.create({
     height: 60
   }
 });
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
 
 /* const MenuNavigator = createStackNavigator({
     Menu: { screen: Menu , navigationOptions: ({ navigation }) => ({
